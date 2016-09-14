@@ -1,0 +1,23 @@
+{
+  "name": "optimove_mocker",
+  "version": "1.0.0",
+  "description": "Mocking an Optimove server to test an implementation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larvit/optimove_mocker.git"
+  },
+  "keywords": [
+    "optimove",
+    "mock"
+  ],
+  "author": "lillem4n <lilleman@larvit.se>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/larvit/optimove_mocker/issues"
+  },
+  "homepage": "https://github.com/larvit/optimove_mocker#readme"
+}
