@@ -61,7 +61,7 @@ function sendErr(req, res, err) {
 function login(req, res) {
 	res.setHeader('Content-Type', 'application/json');
 
-	if (req.postData.username !== 'foo' || req.postData.password !== 'bar') {
+	if (req.postData === undefined || req.postData.username !== 'foo' || req.postData.password !== 'bar') {
 		res.statusCode = 401;
 		res.end('"Unauthorized"');
 	} else {
