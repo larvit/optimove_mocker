@@ -101,9 +101,9 @@ function addChannelTemplates(req, res) {
 		return;
 	}
 
-	if ( ! (req.postBodyJson instanceof Array)) {
+	if ( ! (req.postBodyJson instanceof Array) || req.postBodyJson.length > 100) {
 		res.writeHead(400, {'content-type': 'text/plain'});
-		res.end('Body must be a JSON array');
+		res.end('Body must be a JSON array with maximum 100 entries');
 		return;
 	}
 
