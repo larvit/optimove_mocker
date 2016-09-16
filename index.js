@@ -63,6 +63,10 @@ function runServer(port) {
 				getLastDataUpdate(req, res);
 			} else if (req.urlParsed.pathname === '/integrations/AddChannelTemplates') {
 				addChannelTemplates(req, res);
+			} else if (req.urlParsed.pathname === '/actions/GetExecutedCampaignsByChannel') {
+				getExecutedCampaignsByChannel(req, res);
+			} else if (req.urlParsed.pathname === '/customers/GetCustomerSendDetailsByCampaign') {
+				getCustomerSendDetailsByCampaign(req, res);
 			} else {
 				res.writeHead(405, {'content-type': 'text/plain'});
 				res.end('"Method Not Allowed"');
@@ -84,6 +88,12 @@ function addChannelTemplates(req, res) {
 	if (req.method.toLowerCase() !== 'post') {
 		res.writeHead(405, {'content-type': 'text/plain'});
 		res.end('"Method Not Allowed"');
+		return;
+	}
+
+	if (req.urlParsed.query.ChannelId === undefined) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('URL Parameter ChannelId is missing.');
 		return;
 	}
 
@@ -139,6 +149,101 @@ function checkToken(req, res) {
 	res.end('"Unauthorized"');
 
 	return false;
+}
+
+function getCustomerSendDetailsByCampaign(req, res) {
+	let includeTemplateIDs = false;
+
+	if (checkToken(req, res) === false) return;
+
+	if (req.method.toLowerCase() !== 'get') {
+		res.writeHead(405, {'content-type': 'text/plain'});
+		res.end('"Method Not Allowed"');
+		return;
+	}
+
+	if (req.urlParsed.query.CampaignID === undefined) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('URL Parameter CampaignID is missing.');
+		return;
+	}
+
+	if (req.urlParsed.query.IncludeTemplateIDs.toLowerCase() === 'true') {
+		includeTemplateIDs = true;
+	}
+
+	res.writeHead(200, {'content-type': 'application/json'});
+	if (includeTemplateIDs) {
+		res.end(`[
+	{
+		"CustomerID":"231342",
+		"ChannelID":505,
+		"ScheduledTime":"2015-12-30 10:30:00",
+		"SendID":"HG65D",
+		"TemplateID":12
+	},
+	{
+		"CustomerID":"917251",
+		"ChannelID":505,
+		"ScheduledTime":"2015-12-30 11:45:00",
+		"SendID":"HG65E",
+		"TemplateID":7
+	}
+]`);
+	} else {
+		res.end(`[
+	{
+		"CustomerID":"231342",
+		"ChannelID":505,
+		"ScheduledTime":"2015-12-30 10:30:00",
+		"SendID":"HG65D"
+	},
+	{
+		"CustomerID":"917251",
+		"ChannelID":505,
+		"ScheduledTime":"2015-12-30 11:45:00",
+		"SendID":"HG65E"
+	}
+]`);
+	}
+}
+
+function getExecutedCampaignsByChannel(req, res) {
+	if (checkToken(req, res) === false) return;
+
+	if (req.method.toLowerCase() !== 'get') {
+		res.writeHead(405, {'content-type': 'text/plain'});
+		res.end('"Method Not Allowed"');
+		return;
+	}
+
+	if (req.urlParsed.query.ChannelId === undefined) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('URL Parameter ChannelId is missing.');
+		return;
+	}
+
+	if (req.urlParsed.query.ChannelId !== '505') {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('In this mocking version of the Optimove API only ChannelId 505 is allowed. ' + req.urlParsed.query.ChannelId + ' given.');
+		return;
+	}
+
+	if (req.urlParsed.query.Date === undefined) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('URL Parameter Date is missing.');
+		return;
+	}
+
+	if ( ! req.urlParsed.query.Date.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}/)) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('Invalid Date parameter, must be YYYY-MM-DD.');
+		return;
+	}
+
+	res.writeHead(200, {'content-type': 'application/json'});
+	res.end('[{"CampaignID":12, "CampaignID":16, "CampaignID":17, "CampaignID":19}]');
+	// Notice the fucked up JSON with multiple identical keys...
 }
 
 function getLastDataUpdate(req, res) {
