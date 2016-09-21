@@ -67,6 +67,8 @@ function runServer(port) {
 				getExecutedCampaignsByChannel(req, res);
 			} else if (req.urlParsed.pathname === '/customers/GetCustomerSendDetailsByCampaign') {
 				getCustomerSendDetailsByCampaign(req, res);
+			} else if (req.urlParsed.pathname === '/customers/GetCustomerSendDetailsByChannel') {
+				getCustomerSendDetailsByChannel(req, res);
 			} else {
 				res.writeHead(405, {'content-type': 'text/plain'});
 				res.end('"Method Not Allowed"');
@@ -152,7 +154,22 @@ function checkToken(req, res) {
 }
 
 function getCustomerSendDetailsByCampaign(req, res) {
-	let includeTemplateIDs = false;
+	const	response	= [
+				{
+					'CustomerID':	'231342',
+					'ChannelID':	505,
+					'ScheduledTime':	'2015-12-30 10:30:00',
+					'SendID':	'HG65D'
+				},
+				{
+					'CustomerID':	'917251',
+					'ChannelID':	505,
+					'ScheduledTime':	'2015-12-30 11:45:00',
+					'SendID':	'HG65E'
+				}
+			];
+
+	let	includeTemplateIDs = false;
 
 	if (checkToken(req, res) === false) return;
 
@@ -174,38 +191,64 @@ function getCustomerSendDetailsByCampaign(req, res) {
 
 	res.writeHead(200, {'content-type': 'application/json'});
 	if (includeTemplateIDs) {
-		res.end(`[
-	{
-		"CustomerID":"231342",
-		"ChannelID":505,
-		"ScheduledTime":"2015-12-30 10:30:00",
-		"SendID":"HG65D",
-		"TemplateID":12
-	},
-	{
-		"CustomerID":"917251",
-		"ChannelID":505,
-		"ScheduledTime":"2015-12-30 11:45:00",
-		"SendID":"HG65E",
-		"TemplateID":7
+		response[0].TemplateId = 12;
+		response[1].TemplateId = 7;
 	}
-]`);
-	} else {
-		res.end(`[
-	{
-		"CustomerID":"231342",
-		"ChannelID":505,
-		"ScheduledTime":"2015-12-30 10:30:00",
-		"SendID":"HG65D"
-	},
-	{
-		"CustomerID":"917251",
-		"ChannelID":505,
-		"ScheduledTime":"2015-12-30 11:45:00",
-		"SendID":"HG65E"
+
+	res.end(JSON.stringify(response));
+}
+
+function getCustomerSendDetailsByChannel(req, res) {
+	const	result	= 	[
+					{
+						'CustomerID':	'96134',
+						'TemplateID':	14,
+						'ScheduledTime':	'2016-08-30 10:00:00'
+					},
+					{
+						'CustomerID':	'13482',
+						'TemplateID':	14,
+						'ScheduledTime':	'2016-08-30 10:00:00'
+					}
+				];
+
+	let	attributeDelimiter	= ',',
+		attributeNames;
+
+	if (req.method.toLowerCase() !== 'get') {
+		res.writeHead(405, {'content-type': 'text/plain'});
+		res.end('"Method Not Allowed"');
+		return;
 	}
-]`);
+
+	if (req.urlParsed.query.CampaignID === undefined) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('URL Parameter CampaignID is missing.');
+		return;
 	}
+
+	if (req.urlParsed.query.ChannelID === undefined) {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('URL Parameter ChannelID is missing.');
+		return;
+	}
+
+	if (req.urlParsed.query.CustomerAttributesDelimiter !== undefined && req.urlParsed.query.CustomerAttributesDelimiter !== '') {
+		attributeDelimiter = req.urlParsed.query.CustomerAttributesDelimiter;
+	}
+
+	if (req.urlParsed.query.CustomerAttributes !== undefined) {
+		attributeNames = req.urlParsed.query.CustomerAttributes.split(';');
+
+		result[0].CustomerAttributes = '';
+
+		for (let i = 0; attributeNames[i] !== undefined; i ++) {
+
+		}
+	}
+
+	res.writeHead(200, {'content-type': 'application/json'});
+	res.end(JSON.stringify(result));
 }
 
 function getExecutedCampaignsByChannel(req, res) {
