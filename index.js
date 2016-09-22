@@ -12,6 +12,16 @@ if (require.main === module) {
 	runServer(process.argv[2]);
 }
 
+function randomString(length, chars) {
+	let	result	= '';
+
+	for (let i = length; i > 0; -- i) {
+		result += chars[Math.floor(Math.random() * chars.length)];
+	}
+
+	return result;
+}
+
 function runServer(port) {
 	if (port === undefined) {
 		port = 80;
@@ -238,12 +248,21 @@ function getCustomerSendDetailsByChannel(req, res) {
 	}
 
 	if (req.urlParsed.query.CustomerAttributes !== undefined) {
-		attributeNames = req.urlParsed.query.CustomerAttributes.split(';');
+		attributeNames	= req.urlParsed.query.CustomerAttributes.split(';');
 
-		result[0].CustomerAttributes = '';
+		for (let i = 0; result[i] !== undefined; i ++) {
+			const	thisResult = result[i],
+				attributes	= [];
 
-		for (let i = 0; attributeNames[i] !== undefined; i ++) {
+			for (let i = 0; attributeNames[i] !== undefined; i ++) {
+				if (attributeNames[i] === 'PhoneNumber') {
+					attributes.push(Math.floor(Math.random() * 999999999));
+				} else {
+					attributes.push(randomString(Math.floor(Math.random() * 20), '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .!?'));
+				}
+			}
 
+			thisResult.CustomerAttributes = attributes.join(attributeDelimiter);
 		}
 	}
 
