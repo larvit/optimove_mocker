@@ -314,8 +314,15 @@ function getExecutedCampaignsByChannel(req, res) {
 	}
 
 	res.writeHead(200, {'content-type': 'application/json'});
-	res.end('[{"CampaignID":12, "CampaignID":16, "CampaignID":17, "CampaignID":19}]');
-	// Notice the fucked up JSON with multiple identical keys...
+
+	if (getKeyByValue(tokens, req.headers['authorization-token']) === 'foo') {
+		res.end('[{"CampaignID":12, "CampaignID":16, "CampaignID":17, "CampaignID":19}]');
+		// Notice the fucked up JSON with multiple identical keys... This is cut and pasted from the v3.0 documentation
+	} else if (getKeyByValue(tokens, req.headers['authorization-token']) === 'buz') {
+		res.end('[]');
+	} else {
+		res.end('MMmaDddness1!11! :O :O :O');
+	}
 }
 
 function getLastDataUpdate(req, res) {
