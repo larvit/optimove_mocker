@@ -162,7 +162,7 @@ function addChannelTemplates(req, res) {
 
 function checkToken(req, res) {
 	for (const key of Object.keys(req.headers)) {
-		if (key.toLowerCase() === 'authorization-token' && getKeyByValue(tokens, req.header[key]) !== undefined) {
+		if (key.toLowerCase() === 'authorization-token' && getKeyByValue(tokens, req.headers[key]) !== undefined) {
 			return true;
 		}
 	}
