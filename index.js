@@ -2,7 +2,7 @@
 
 const	querystring	= require('querystring'),
 	formidable	= require('formidable'),
-	token	= 'bf186b0a-ff34-44b2-9f62-496aa0d5e2c7',
+	tokens	= {'foo': 'bf186b0a-ff34-44b2-9f62-496aa0d5e2c7', 'buz': '639e2d7d-6366-440f-92c1-a76128044bf7'},
 	async	= require('async'),
 	http	= require('http'),
 	util	= require('util'),
@@ -10,6 +10,16 @@ const	querystring	= require('querystring'),
 
 if (require.main === module) {
 	runServer(process.argv[2]);
+}
+
+function getKeyByValue(obj, value) {
+	for (const key of Object.keys(obj)) {
+		if (obj[key] === value) {
+			return key;
+		}
+	}
+
+	return undefined;
 }
 
 function randomString(length, chars) {
@@ -152,7 +162,7 @@ function addChannelTemplates(req, res) {
 
 function checkToken(req, res) {
 	for (const key of Object.keys(req.headers)) {
-		if (key.toLowerCase() === 'authorization-token' && req.headers[key] === token) {
+		if (key.toLowerCase() === 'authorization-token' && getKeyByValue(tokens, req.header[key]) !== undefined) {
 			return true;
 		}
 	}
@@ -327,18 +337,21 @@ function login(req, res) {
 	if (req.postData === undefined || req.postData.username === undefined || req.postData.password === undefined) {
 		res.statusCode = 400;
 		res.end('"Bad Request"');
-	} else if (req.postData === undefined || req.postData.username !== 'foo' || req.postData.password !== 'bar') {
-		//res.statusCode = 403;
-		//res.end('"Forbidden"');
+	} else if (req.postData !== undefined && req.postData.username === 'foo' && req.postData.password === 'bar') {
+		res.statusCode = 200;
+		res.end('"' + tokens.foo + '"'); // NOTICE! This includes ":s that are NOT in the documentation, but exists in the live API
+	} else if (req.postData !== undefined && req.postData.username === 'buz' && req.postData.password === 'lightyear') {
+		res.statusCode = 200;
+		res.end('"' + tokens.buz + '"'); // NOTICE! This includes ":s that are NOT in the documentation, but exists in the live API
+	} else {
+		//res.statusCode = 401;
+		//res.end('"Unauthorized"');
 
 		// According to the docs an invalid login is http 500...
 		// That is very bad usage of the http codes, but the docs are clear
-		// The only correct code here should be 403
+		// The only correct code here should be 401
 		res.statusCode = 500;
 		res.end('"Internal Server Error"');
-	} else {
-		res.statusCode = 200;
-		res.end('"' + token + '"'); // NOTICE! This includes ":s that are NOT in the documentation, but exists in the live API
 	}
 }
 
