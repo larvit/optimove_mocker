@@ -272,7 +272,7 @@ function getCustomerSendDetailsByChannel(req, res) {
 				attributes	= [];
 
 			for (let i = 0; attributeNames[i] !== undefined; i ++) {
-				if (attributeNames[i] === 'PhoneNumber') {
+				if (attributeNames[i] === 'PhoneNumber' || attributeNames[i] === 'Phone%20Number') {
 					attributes.push(Math.floor(Math.random() * 999999999));
 				} else {
 					attributes.push(randomString(Math.floor(Math.random() * 20), '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .!?'));
