@@ -115,6 +115,13 @@ function addChannelTemplates(req, res) {
 		return;
 	}
 
+	// Via correspondence with Shachar Guz at Optimove, the content type must be application/json. This is undocumented
+	if (req.headers['content-type'] !== 'application/json') {
+		res.writeHead(400, {'content-type': 'text/plain'});
+		res.end('Invalid content-type given. Expected "application/json", but received: "' + req.headers['content-type'] + '"');
+		return;
+	}
+
 	try {
 		req.postBodyJson = JSON.parse(req.postBody);
 	} catch(err) {
