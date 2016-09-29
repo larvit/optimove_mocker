@@ -323,7 +323,7 @@ function getExecutedCampaignsByChannel(req, res) {
 	res.writeHead(200, {'content-type': 'application/json'});
 
 	if (getKeyByValue(tokens, req.headers['authorization-token']) === 'foo') {
-		res.end('[{"CampaignID":12},{"CampaignID":16},{"CampaignID":17},{"CampaignID":19}]');
+		res.end('[{"CampaignID":"12"},{"CampaignID":"16"},{"CampaignID":"17"},{"CampaignID":"19"}]');
 		//res.end('[{"CampaignID":12, "CampaignID":16, "CampaignID":17, "CampaignID":19}]');
 		// Notice the fucked up JSON with multiple identical keys... This is cut and pasted from the v3.0 documentation
 		// It also is not as it is behaving in the live API
