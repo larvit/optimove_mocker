@@ -279,7 +279,9 @@ function getCustomerSendDetailsByChannel(req, res) {
 				}
 			}
 
-			thisResult.CustomerAttributes = attributes.join(attributeDelimiter);
+			// In the API documentation the name is "CustomerAttributes", but in the real API the name is "CustomerAttribute"
+			//thisResult.CustomerAttributes = attributes.join(attributeDelimiter);
+			thisResult.CustomerAttribute = attributes.join(attributeDelimiter);
 		}
 	}
 
