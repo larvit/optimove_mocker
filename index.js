@@ -12,6 +12,10 @@ if (require.main === module) {
 	runServer(process.argv[2]);
 }
 
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function getKeyByValue(obj, value) {
 	for (const key of Object.keys(obj)) {
 		if (obj[key] === value) {
@@ -265,15 +269,29 @@ function getCustomerSendDetailsByChannel(req, res) {
 	}
 
 	if (req.urlParsed.query.CustomerAttributes !== undefined) {
+		const	isos	= ['SE', 'SWE', 'NO', 'NOR', 'FI', 'FIN'];
+
 		attributeNames	= req.urlParsed.query.CustomerAttributes.split(';');
 
 		for (let i = 0; result[i] !== undefined; i ++) {
 			const	thisResult = result[i],
-				attributes	= [];
+				attributes	= [],
+				iso	= isos[Math.floor(Math.random() * isos.length)];
 
 			for (let i = 0; attributeNames[i] !== undefined; i ++) {
-				if (attributeNames[i] === 'PhoneNumber' || attributeNames[i] === 'Phone%20Number') {
-					attributes.push(Math.floor(Math.random() * 999999999));
+				if (attributeNames[i] === 'PhoneNumber') {
+
+					if (iso === 'SE' || iso === 'SWE') {
+						attributes.push(parseInt('467') + getRandomInt(10000000, 99999999).toString());
+					} else if (iso === 'NO' || iso === 'NOR') {
+						attributes.push(parseInt('474') + getRandomInt(1000000, 9999999).toString());
+					} else if (iso === 'FI' || iso === 'FIN') {
+						attributes.push(parseInt('3589') + getRandomInt(100000, 999999).toString());
+					} else {
+						attributes.push(Math.floor(Math.random() * 999999999));
+					}
+				} else if (attributeNames[i] === 'ISO') {
+					attributes.push(iso);
 				} else {
 					attributes.push(randomString(Math.floor(Math.random() * 20), '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .!?'));
 				}
