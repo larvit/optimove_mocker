@@ -286,7 +286,7 @@ function getCustomerSendDetailsByChannel(req, res) {
 					} else if (iso === 'NO' || iso === 'NOR') {
 						attributes.push(parseInt('474') + getRandomInt(1000000, 9999999).toString());
 					} else if (iso === 'FI' || iso === 'FIN') {
-						attributes.push(parseInt('3589') + getRandomInt(100000, 999999).toString());
+						attributes.push(parseInt('3584') + getRandomInt(1000000, 9999999).toString());
 					} else {
 						attributes.push(Math.floor(Math.random() * 999999999));
 					}
